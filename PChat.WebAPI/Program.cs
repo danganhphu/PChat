@@ -1,11 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using PChat.Persistance.Context;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers().AddApplicationPart(typeof(PChat.Presentation.AssemblyReference).Assembly);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DbDevConnection")));
+builder.Services.AddMediatR(x=>x.RegisterServicesFromAssemblies(typeof(PChat.Application.AssemblyReference).Assembly));
+// builder.Services.AddAutoMapper(typeof(PChat.Persistance.AssemblyRefence).Assembly);
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
