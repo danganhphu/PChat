@@ -13,12 +13,11 @@ public sealed class PersistanceServiceInstaller : IServiceInstaller
         services.AddAutoMapper(typeof(PChat.Persistance.AssemblyRefence).Assembly);
 
         string connectionString = configuration.GetConnectionString("DbDevConnection");
+        
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(connectionString, 
                 sqlOptions => sqlOptions.MigrationsAssembly(typeof(PChat.Persistance.AssemblyRefence).Assembly.FullName)));
 
-
-        // services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
         services.AddIdentityCore<User>(options =>
         {
             options.Password.RequireNonAlphanumeric = false;

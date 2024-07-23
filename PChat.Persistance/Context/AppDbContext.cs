@@ -11,32 +11,39 @@ public sealed class AppDbContext : IdentityDbContext<User>
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
-
-    public DbSet<Call> Calls { get; set; } = null!;
-    public DbSet<Contact> Contacts { get; set; } = null!;
-    public DbSet<Group> Groups { get; set; } = null!;
-    public DbSet<GroupUser> GroupUsers { get; set; } = null!;
-    public DbSet<GroupCall> GroupCalls { get; set; } = null!;
-    public DbSet<Message> Messages { get; set; } = null!;
-    public DbSet<ErrorLog> ErrorLogs { get; set; } = null!;
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
         foreach (var entityType in modelBuilder.Model.GetEntityTypes ()) {
-            var tableName = entityType.GetTableName ();
-            if (tableName.StartsWith ("AspNet")) {
+            var tableName = entityType.GetTableName();
+            if (tableName != null && tableName.StartsWith("AspNet")) {
                 entityType.SetTableName (tableName.Substring (6));
             }
         }
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssemblyRefence).Assembly);
-
+        // Customize the identity user table
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.Ignore(u => u.NormalizedEmail);
+            entity.Ignore(u => u.NormalizedUserName);
+            entity.Ignore(u => u.PhoneNumber);
+            entity.Ignore(u => u.PhoneNumberConfirmed);
+            entity.Ignore(u => u.AccessFailedCount);
+            entity.Ignore(u => u.LockoutEnabled);
+            entity.Ignore(u => u.LockoutEnd);
+            entity.Ignore(u => u.SecurityStamp);
+            entity.Ignore(u => u.TwoFactorEnabled);
+            entity.Ignore(u => u.EmailConfirmed);
+            entity.Ignore(u => u.ConcurrencyStamp);
+        });
+        
+        // Ignore Identity-related entities
+        modelBuilder.Ignore<IdentityRole<string>>();
         modelBuilder.Ignore<IdentityUserLogin<string>>();
         modelBuilder.Ignore<IdentityUserRole<string>>();
         modelBuilder.Ignore<IdentityUserClaim<string>>();
         modelBuilder.Ignore<IdentityUserToken<string>>();
         modelBuilder.Ignore<IdentityRoleClaim<string>>();
-        modelBuilder.Ignore<IdentityRole<string>>();
     }
     
 
