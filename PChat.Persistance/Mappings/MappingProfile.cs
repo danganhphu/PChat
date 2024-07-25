@@ -1,6 +1,13 @@
-﻿namespace PChat.Persistance.Mappings;
+﻿using AutoMapper;
+using PChat.Application.Features.AuthFeatures.Commands.Register;
+using PChat.Domain.Entities;
 
-public class MappingProfile
+namespace PChat.Persistance.Mappings;
+
+public sealed class MappingProfile : Profile
 {
-    
+    public MappingProfile()
+    {
+        CreateMap<RegisterCommand, User>();
+    }
 }

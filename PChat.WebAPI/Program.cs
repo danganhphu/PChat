@@ -14,7 +14,14 @@ builder.Services.AddMediatR(x=>x.RegisterServicesFromAssemblies(typeof(PChat.App
 // builder.Services.AddAutoMapper(typeof(PChat.Persistance.AssemblyRefence).Assembly);
 
 builder.Services.AddControllers();
-
+// builder.Services.InstallServices(
+//     configuration: builder.Configuration,
+//     hostBuilder: builder.Host,
+//     assemblies: new Assembly[]
+//     {
+//         typeof(ApplicationServiceInstaller).Assembly,
+//         typeof(PersistanceServiceInstaller).Assembly
+//     });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

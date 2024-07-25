@@ -6,14 +6,14 @@ public sealed class LoginCommandValidator : AbstractValidator<LoginCommand>
 {
     public LoginCommandValidator()
     {
-        RuleFor(p => p.UserNameOrEmail).NotEmpty().WithMessage("Kullanıcı adı ya da mail bilgisi boş olamaz!");
-        RuleFor(p => p.UserNameOrEmail).NotNull().WithMessage("Kullanıcı adı ya da mail bilgisi boş olamaz!");
-        RuleFor(p => p.UserNameOrEmail).MinimumLength(3).WithMessage("Kullanıcı adı ya da mail bilgisi en az 3 karakter olmalıdır!");
-        RuleFor(p => p.Password).NotEmpty().WithMessage("Şifre boş olamaz!");
-        RuleFor(p => p.Password).NotNull().WithMessage("Şifre boş olamaz!");
-        RuleFor(p => p.Password).Matches("[A-Z]").WithMessage("Şife en az 1 adet büyük harf içermelidir!");
-        RuleFor(p => p.Password).Matches("[a-z]").WithMessage("Şife en az 1 adet küçük harf içermelidir!");
-        RuleFor(p => p.Password).Matches("[0-9]").WithMessage("Şife en az 1 adet rakam içermelidir!");
-        RuleFor(p => p.Password).Matches("[^a-zA-Z0-9]").WithMessage("Şife en az 1 adet özel karakter içermelidir!");
+        RuleFor(p => p.UserNameOrEmail).NotEmpty().WithMessage("Username or email cannot be empty!");
+        RuleFor(p => p.UserNameOrEmail).NotNull().WithMessage("Username or email cannot be empty!");
+        RuleFor(p => p.UserNameOrEmail).MinimumLength(3).WithMessage("Username or email must be at least 3 characters long!");
+        RuleFor(p => p.Password).NotEmpty().WithMessage("Password cannot be empty!");
+        RuleFor(p => p.Password).NotNull().WithMessage("Password cannot be empty!");
+        RuleFor(p => p.Password).Matches("[A-Z]").WithMessage("Password must contain at least 1 uppercase letter!");
+        RuleFor(p => p.Password).Matches("[a-z]").WithMessage("Password must contain at least 1 lowercase letter!");
+        RuleFor(p => p.Password).Matches("[0-9]").WithMessage("Password must contain at least 1 digit!");
+        RuleFor(p => p.Password).Matches("[^a-zA-Z0-9]").WithMessage("Password must contain at least 1 special character!");
     }
 }

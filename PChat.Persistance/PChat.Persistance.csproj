@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PChat.Application\PChat.Application.csproj" />
     <ProjectReference Include="..\PChat.Domain\PChat.Domain.csproj" />
   </ItemGroup>
 

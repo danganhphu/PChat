@@ -17,6 +17,7 @@ public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, Me
     public async Task<MessageResponse> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         await _authService.RegisterAsync(request);
-        return new("Kullanıcı kaydı başarıyla tamamlandı!");
+        
+        return new("User registration completed successfully!");
     }
 }
