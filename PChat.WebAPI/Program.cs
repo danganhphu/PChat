@@ -1,27 +1,26 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using PChat.Persistance.Context;
+using PChat.WebAPI.Configurations;
+using PChat.WebAPI.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
-builder.Services.AddControllers().AddApplicationPart(typeof(PChat.Presentation.AssemblyReference).Assembly);
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// builder.Services.InstallServices(builder.Configuration, builder.Host,
+//     typeof(ApplicationServiceInstaller).Assembly,
+//     typeof(AuthorizeServiceInstaller).Assembly,
+//     typeof(InfrastructureServiceInstaller).Assembly,
+//     typeof(PersistanceDIServiceInstaller).Assembly,
+//     typeof(PersistanceServiceInstaller).Assembly,
+//     typeof(PresentationServiceInstaller).Assembly);
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DbDevConnection")));
-builder.Services.AddMediatR(x=>x.RegisterServicesFromAssemblies(typeof(PChat.Application.AssemblyReference).Assembly));
-// builder.Services.AddAutoMapper(typeof(PChat.Persistance.AssemblyRefence).Assembly);
+builder.Services.InstallServices(
+    builder.Configuration,
+    builder.Host,
+    Assembly.GetExecutingAssembly() // Cung cấp các assembly chứa các IServiceInstaller
+);
 
-builder.Services.AddControllers();
-// builder.Services.InstallServices(
-//     configuration: builder.Configuration,
-//     hostBuilder: builder.Host,
-//     assemblies: new Assembly[]
-//     {
-//         typeof(ApplicationServiceInstaller).Assembly,
-//         typeof(PersistanceServiceInstaller).Assembly
-//     });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -31,9 +30,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddlewareExtensions();
+
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+// app.UseAuthorization();
 
 app.MapControllers();
 

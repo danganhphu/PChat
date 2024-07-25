@@ -1,4 +1,8 @@
-﻿using PChat.WebAPI.Middleware;
+﻿using GenericRepository;
+using PChat.Application.Services;
+using PChat.Persistance.Context;
+using PChat.Persistance.Services;
+using PChat.WebAPI.Middleware;
 
 namespace PChat.WebAPI.Configurations;
 
@@ -6,13 +10,9 @@ public sealed class PersistanceDIServiceInstaller : IServiceInstaller
 {
     public void Install(IServiceCollection services, IConfiguration configuration, IHostBuilder host)
     {
-        // services.AddScoped<IAuthService, AuthService>();
-        // services.AddScoped<IMailService, MailService>();
-        // services.AddScoped<IRoleService, RoleService>();
-        // services.AddScoped<IUserRoleService, UserRoleService>();
+        services.AddScoped<IAuthService, AuthService>();
 
-        // services.AddTransient<ExceptionMiddleware>();
-        // services.AddScoped<IUnitOfWork, UnitOfWork<AppDbContext>>();
-        // services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+        services.AddTransient<ExceptionMiddleware>();
+        services.AddScoped<IUnitOfWork, UnitOfWork<AppDbContext>>();
     }
 }

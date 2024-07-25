@@ -1,4 +1,6 @@
-﻿namespace PChat.WebAPI.Configurations;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+namespace PChat.WebAPI.Configurations;
 
 public sealed class AuthorizeServiceInstaller : IServiceInstaller
 {

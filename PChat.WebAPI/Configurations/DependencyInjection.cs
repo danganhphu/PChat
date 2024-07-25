@@ -8,7 +8,7 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration,
         IHostBuilder hostBuilder,
-        params Assembly[] assemblies )
+        params Assembly[] assemblies)
     {
         IEnumerable<IServiceInstaller> serviceInstallers = assemblies
             .SelectMany(s => s.DefinedTypes)
@@ -28,6 +28,4 @@ public static class DependencyInjection
                !typeInfo.IsInterface &&
                !typeInfo.IsAbstract;
     }
-
-
 }
