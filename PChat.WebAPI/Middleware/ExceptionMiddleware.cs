@@ -1,64 +1,108 @@
-﻿using FluentValidation;
+﻿using System.Net;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using PChat.Application.Bases;
 using PChat.Domain.Entities;
 using PChat.Persistance.Context;
+using System.Text.Json;
+
 
 namespace PChat.WebAPI.Middleware;
 
 public sealed class ExceptionMiddleware : IMiddleware
 {
     private readonly AppDbContext _context;
+    private readonly ILogger<ExceptionMiddleware> _logger;
 
-    public ExceptionMiddleware(AppDbContext context)
+    public ExceptionMiddleware(ILogger<ExceptionMiddleware> logger)
     {
-        _context = context;
+        _logger = logger;
     }
 
-    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    public async Task InvokeAsync(HttpContext httpContext, RequestDelegate next)
     {
         try
         {
-            await next(context);
+            await next(httpContext);
         }
         catch (Exception ex)
         {
-            await LogExceptionToDatabaseAsync(ex, context.Request);
-            await HandleExceptionAsync(context, ex);
+            // await LogExceptionToDatabaseAsync(ex, httpContext.Request);
+            await HandleExceptionAsync(httpContext, ex);
         }
     }
 
-    private Task HandleExceptionAsync(HttpContext context, Exception ex)
+    private async Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = 500;
+        //_logger.LogError(error, "An unexpected error occurred.");
 
-        if (ex.GetType() == typeof(ValidationException))
+        var response = context.Response;
+        response.ContentType = "application/json";
+        var responseModel = new BaseResponse<string>() { Succeeded = false, Message = ex?.Message };
+        //TODO:: cover all validation errors
+        switch (ex)
         {
-            return context.Response.WriteAsync(new ValidationErrorDetails
-            {
-                Errors = ((ValidationException)ex).Errors.Select(s => s.PropertyName),
-                StatusCode = 403
-            }.ToString());
+            case UnauthorizedAccessException e:
+                // custom application error
+                responseModel.Message = ex.Message;
+                responseModel.StatusCode = HttpStatusCode.Unauthorized;
+                response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                break;
+
+            case ValidationException e:
+                // custom validation error
+                responseModel.Message = ex.Message;
+                responseModel.StatusCode = HttpStatusCode.UnprocessableEntity;
+                response.StatusCode = (int)HttpStatusCode.UnprocessableEntity;
+                break;
+            case KeyNotFoundException e:
+                // not found error
+                responseModel.Message = ex.Message;
+                ;
+                responseModel.StatusCode = HttpStatusCode.NotFound;
+                response.StatusCode = (int)HttpStatusCode.NotFound;
+                break;
+
+            case DbUpdateException e:
+                // can't update error
+                responseModel.Message = e.Message;
+                responseModel.StatusCode = HttpStatusCode.BadRequest;
+                response.StatusCode = (int)HttpStatusCode.BadRequest;
+                break;
+            
+            default:
+                responseModel.Message = ex.Message;
+                responseModel.StatusCode = HttpStatusCode.InternalServerError;
+                response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                break;
         }
 
-        return context.Response.WriteAsync(new ErrorResult
-        {
-            Message = ex.Message,
-            StatusCode = context.Response.StatusCode
-        }.ToString());
-    }
+        var result = JsonSerializer.Serialize(responseModel);
 
-    private async Task LogExceptionToDatabaseAsync(Exception ex, HttpRequest request)
+        await response.WriteAsync(result);
+        LogAdditionalInfo(ex, responseModel);
+    }
+    private void LogAdditionalInfo(Exception error, BaseResponse<string> responseModel)
     {
-        ErrorLog errorLog = new()
-        {
-            ErrorMessage = ex.Message,
-            StackTrace = ex.StackTrace,
-            RequestPath = request.Path,
-            RequestMethod = request.Method,
-            Timestamp = DateTime.Now,
-        };
+        _logger.LogInformation($"Error Message: {error.Message}");
 
-        await _context.Set<ErrorLog>().AddAsync(errorLog, default);
-        await _context.SaveChangesAsync(default);
+        if (error.InnerException != null)
+        {
+            _logger.LogInformation($"Inner Exception: {error.InnerException.Message}");
+        }
     }
+    // private async Task LogExceptionToDatabaseAsync(Exception ex, HttpRequest request)
+    // {
+    //     ErrorLog errorLog = new()
+    //     {
+    //         ErrorMessage = ex.Message,
+    //         StackTrace = ex.StackTrace,
+    //         RequestPath = request.Path,
+    //         RequestMethod = request.Method,
+    //         Timestamp = DateTime.Now,
+    //     };
+    //
+    //     await _context.Set<ErrorLog>().AddAsync(errorLog, default);
+    //     await _context.SaveChangesAsync(default);
+    // }
 }

@@ -2,9 +2,9 @@
 
 public static class MiddlewareExtension
 {
-    public static IApplicationBuilder UseMiddlewareExtensions(this IApplicationBuilder app)
+    public static IApplicationBuilder UseMiddlewareExtensions(this IApplicationBuilder builder)
     {
-        app.UseMiddleware<ExceptionMiddleware>();
-        return app;
+        builder.UseMiddleware<ExceptionMiddleware>();
+        return builder;
     }
 }

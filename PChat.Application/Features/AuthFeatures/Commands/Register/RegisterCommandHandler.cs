@@ -1,23 +1,15 @@
 ﻿using PChat.Application.Services;
 using PChat.Domain.Dto;
 using MediatR;
+using PChat.Application.Bases;
 using PChat.Application.Features.AuthFeatures.Commands.Register;
 
 namespace CleanArchitecture.Application.Features.AuthFeatures.Commands.Register;
 
-public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand, MessageResponse>
+public sealed class RegisterCommandHandler(IAuthService authService) : IRequestHandler<RegisterCommand, BaseResponse<RegisterResult>>
 {
-    private readonly IAuthService _authService;
-
-    public RegisterCommandHandler(IAuthService authService)
+    public async Task<BaseResponse<RegisterResult>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        _authService = authService;
-    }
-
-    public async Task<MessageResponse> Handle(RegisterCommand request, CancellationToken cancellationToken)
-    {
-        await _authService.RegisterAsync(request);
-        
-        return new("User registration completed successfully!");
+        return  await authService.RegisterAsync(request);
     }
 }

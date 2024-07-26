@@ -14,6 +14,8 @@ public sealed class PersistanceServiceInstaller : IServiceInstaller
 
         string connectionString = configuration.GetConnectionString("DbDevConnection");
         
+        // builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DbDevConnection")));
+
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(connectionString, 
                 sqlOptions => sqlOptions.MigrationsAssembly(typeof(PChat.Persistance.AssemblyRefence).Assembly.FullName)));
@@ -24,18 +26,5 @@ public sealed class PersistanceServiceInstaller : IServiceInstaller
             options.Password.RequiredLength = 1;
             options.Password.RequireUppercase = false;
         }).AddEntityFrameworkStores<AppDbContext>();
-
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Information()
-            .Enrich.FromLogContext()
-            .WriteTo.Console()
-            .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
-            .WriteTo.MSSqlServer(
-                connectionString: connectionString,
-                tableName: "Logs",
-                autoCreateSqlTable: true)
-            .CreateLogger();
-
-        host.UseSerilog();
     }
 }

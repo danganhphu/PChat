@@ -24,8 +24,6 @@ public sealed class AppDbContext : IdentityDbContext<User>
         // Customize the identity user table
         modelBuilder.Entity<User>(entity =>
         {
-            entity.Ignore(u => u.NormalizedEmail);
-            entity.Ignore(u => u.NormalizedUserName);
             entity.Ignore(u => u.PhoneNumber);
             entity.Ignore(u => u.PhoneNumberConfirmed);
             entity.Ignore(u => u.AccessFailedCount);
@@ -62,4 +60,21 @@ public sealed class AppDbContext : IdentityDbContext<User>
         }
         return base.SaveChangesAsync(cancellationToken);
     }
+    
+    // public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    // {
+    //     foreach (var entry in base.ChangeTracker.Entries<BaseEntity>()
+    //                  .Where(q => q.State == EntityState.Added || q.State == EntityState.Modified))
+    //     {
+    //         entry.Entity.DateModified = DateTime.Now;
+    //         entry.Entity.ModifiedBy = _userService.UserId;
+    //         if (entry.State == EntityState.Added)
+    //         {
+    //             entry.Entity.DateCreated = DateTime.Now;
+    //             entry.Entity.CreatedBy = _userService.UserId;
+    //         }
+    //     }
+    //
+    //     return base.SaveChangesAsync(cancellationToken);
+    // }
 }

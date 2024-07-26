@@ -6,35 +6,34 @@ using PChat.Application.Features.AuthFeatures.Commands.Login;
 using PChat.Application.Features.AuthFeatures.Commands.Register;
 using PChat.Domain.Dto;
 using PChat.Presentation.Abstraction;
+using PChat.Presentation.Configurations;
 
 namespace PChat.Presentation.Controllers;
 
-public sealed class AuthController : ApiController
+public sealed class AuthController : AppControllerBase
 {
-    public AuthController(IMediator mediator) : base(mediator)
-    {
-    }
-
-    [HttpPost("[action]")]
+    
+    [HttpPost(Router.AuthRouting.Actions.Register)]
     [AllowAnonymous]
     public async Task<IActionResult> Register(RegisterCommand request, CancellationToken cancellationToken)
     {
-        MessageResponse response = await _mediator.Send(request, cancellationToken);
-        return Ok(response);
+        return CustomResult(await Mediator.Send(request, cancellationToken));
+
+        // MessageResponse response = await Mediator.Send(request, cancellationToken);
+        // return Ok(response);
     }
 
-    [HttpPost("[action]")]
+    [HttpPost(Router.AuthRouting.Actions.Login)]
     [AllowAnonymous]
     public async Task<IActionResult> Login(LoginCommand request, CancellationToken cancellationToken)
     {
-        LoginCommandResponse response = await _mediator.Send(request, cancellationToken);
-        return Ok(response);
+        return CustomResult(await Mediator.Send(request, cancellationToken));
     }
 
-    [HttpPost("[action]")]
+    [HttpPost(Router.AuthRouting.Actions.CreateTokenByRefreshToken)]
     public async Task<IActionResult> CreateTokenByRefreshToken(CreateNewTokenByRefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        LoginCommandResponse response = await _mediator.Send(request, cancellationToken);
+        LoginCommandResponse response = await Mediator.Send(request, cancellationToken);
         return Ok(response);
     }
 

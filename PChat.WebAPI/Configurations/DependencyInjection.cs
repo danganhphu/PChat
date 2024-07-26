@@ -10,7 +10,12 @@ public static class DependencyInjection
         IHostBuilder hostBuilder,
         params Assembly[] assemblies)
     {
-        IEnumerable<IServiceInstaller> serviceInstallers = assemblies
+        
+        // Include the executing assembly
+        var executingAssembly = Assembly.GetExecutingAssembly();
+        var allAssemblies = assemblies.Concat(new[] { executingAssembly }).Distinct();
+        
+        IEnumerable<IServiceInstaller> serviceInstallers = allAssemblies
             .SelectMany(s => s.DefinedTypes)
             .Where(IsAssignableToType<IServiceInstaller>)
             .Select(Activator.CreateInstance)
