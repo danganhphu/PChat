@@ -8,7 +8,7 @@ public static class Router
     
     public static class AuthRouting
     {
-        public const string Prefix = rule + "Auth";
+        public const string Prefix = rule + "auth";
 
         public static class Actions
         {
@@ -17,6 +17,7 @@ public static class Router
             public const string SendResetPasswordCode = Prefix + "/sendResetPasswordCode";
             public const string ResetPassword = Prefix + "/resetPassword";
             public const string CreateTokenByRefreshToken = Prefix + "/createTokenByRefreshToken";
+            public const string PostHubconnection = Prefix + "/post-hubconnection";
         }
     }
 }

@@ -9,6 +9,7 @@
   "Created": "Created",
   "Empty": "Source is empty",
   "UserNotFound": "User not found.",
+  "UserNotFoundHubConnection": "User not found with ID '{0}'",
   "InvalidCredentials": "Credentials for '{0}' aren't valid.",
   "UsernameExists": "Username '{0}' already exists.",
   "EmailExists": "Email '{0}' already exists.",

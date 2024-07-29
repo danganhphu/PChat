@@ -1,7 +1,4 @@
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using PChat.Persistence.Context;
-using PChat.WebAPI;
+using PChat.Application.Hubs;
 using PChat.WebAPI.Configurations;
 using PChat.WebAPI.Middleware;
 using Serilog;
@@ -16,6 +13,7 @@ try
 {
     Log.Information("starting server.");
     var builder = WebApplication.CreateBuilder(args);
+    
     builder.Host.UseSerilog((context, loggerConfiguration) =>
     {
         loggerConfiguration.WriteTo.Console();
@@ -26,6 +24,8 @@ try
     //     builder.Host,
     //     Assembly.GetExecutingAssembly()
     // );
+    builder.Services.AddHttpContextAccessor();
+    builder.Services.AddSignalR();
     builder.Services.InstallServices(builder.Configuration, builder.Host,
         typeof(ApplicationServiceInstaller).Assembly,
         typeof(AuthorizeServiceInstaller).Assembly,
@@ -61,6 +61,7 @@ try
     app.UseAuthorization();
     app.UseAuthorization();
     app.MapControllers();
+    app.MapHub<ChatHub>("/chatHub");
     app.Run();
 }
 catch (Exception ex)

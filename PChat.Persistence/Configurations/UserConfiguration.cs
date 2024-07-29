@@ -16,17 +16,14 @@ public sealed class UserConfiguration: IEntityTypeConfiguration<User>
             .IsUnicode();
 
         builder.Property(u => u.Dob)
-            .IsRequired()
             .HasMaxLength(10)
             .IsUnicode();
 
         builder.Property(u => u.Phone)
-            .IsRequired()
             .HasMaxLength(15)
             .IsUnicode();
 
         builder.Property(u => u.Address)
-            .IsRequired()
             .HasMaxLength(200)
             .IsUnicode();
 

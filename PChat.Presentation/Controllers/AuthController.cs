@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PChat.Application.Features.AuthFeatures.Commands.CreateNewTokenByRefreshToken;
 using PChat.Application.Features.AuthFeatures.Commands.Login;
+using PChat.Application.Features.AuthFeatures.Commands.PostHubConnection;
 using PChat.Application.Features.AuthFeatures.Commands.Register;
 using PChat.Domain.Dto;
 using PChat.Presentation.Abstraction;
@@ -18,9 +19,6 @@ public sealed class AuthController : AppControllerBase
     public async Task<IActionResult> Register(RegisterCommand request, CancellationToken cancellationToken)
     {
         return CustomResult(await Mediator.Send(request, cancellationToken));
-
-        // MessageResponse response = await Mediator.Send(request, cancellationToken);
-        // return Ok(response);
     }
 
     [HttpPost(Router.AuthRouting.Actions.Login)]
@@ -36,5 +34,10 @@ public sealed class AuthController : AppControllerBase
         LoginCommandResponse response = await Mediator.Send(request, cancellationToken);
         return Ok(response);
     }
-
+    
+    [HttpPost(Router.AuthRouting.Actions.PostHubconnection)]
+    public async Task<IActionResult> PostHubConnection(PostHubConnectionCommand request, CancellationToken cancellationToken)
+    {
+        return CustomResult(await Mediator.Send(request, cancellationToken));
+    }
 }

@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using PChat.Application.Abstractions;
 using PChat.Application.Bases;
+using PChat.Application.Constants;
 using PChat.Application.Features.AuthFeatures.Commands.CreateNewTokenByRefreshToken;
 using PChat.Application.Features.AuthFeatures.Commands.Login;
+using PChat.Application.Features.AuthFeatures.Commands.PostHubConnection;
 using PChat.Application.Features.AuthFeatures.Commands.Register;
 using PChat.Application.Services;
 using PChat.Domain.Entities;
@@ -17,7 +19,8 @@ public sealed class AuthService(
     IMapper mapper,
     IStringLocalizer<BaseResponseHandler> localizer,
     IStringLocalizer<AuthService> authServiceLocalizer,
-    IJwtProvider jwtProvider)
+    IJwtProvider jwtProvider,
+    IUser currentUser)
     : BaseResponseHandler(localizer), IAuthService
 {
     public async Task<LoginCommandResponse> CreateTokenByRefreshTokenAsync(CreateNewTokenByRefreshTokenCommand request,
@@ -64,7 +67,8 @@ public sealed class AuthService(
 
     public async Task<BaseResponse<RegisterResult>> RegisterAsync(RegisterCommand request)
     {
-        User user = mapper.Map<User>(request);
+        var user = mapper.Map<User>(request);
+        user.Avatar = Constants.AvatarDefault;
         var existingUser = await userManager.FindByNameAsync(request.UserName);
 
         if (existingUser != null)
@@ -90,6 +94,25 @@ public sealed class AuthService(
         else
         {
             return Conflict<RegisterResult>(authServiceLocalizer["EmailExists", request.Email]);
+        }
+    }
+    
+    public async Task<BaseResponse<string>> PostHubConnection(PostHubConnectionCommand request, CancellationToken cancellationToken)
+    {
+        var userId = currentUser.Id;
+        var user = await userManager.Users
+            .FirstOrDefaultAsync(x => x.Id.Equals(userId), cancellationToken);
+
+        if (user != null)
+        {
+            user.CurrentSession = request.Key;
+            var result = await userManager.UpdateAsync(user);
+            
+            return !result.Succeeded ? BadRequest<string>(authServiceLocalizer["BadRequestDetails"], result.Errors.Select(a => a.Description).ToList()) : Success("PostHubConnection Success");
+        }
+        else
+        {
+            return NotFound<string>(localizer["UserNotFoundHubConnection", request.Key]);
         }
     }
 }

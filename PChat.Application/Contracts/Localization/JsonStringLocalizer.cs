@@ -36,7 +36,7 @@ public class JsonStringLocalizer : IStringLocalizer
 
     public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
     {
-        var filePath = $"Resources/{Thread.CurrentThread.CurrentCulture.Name}.json";
+        var filePath = $"Resources/Localization/{Thread.CurrentThread.CurrentCulture.Name}.json";
 
         using FileStream stream = new(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         using StreamReader streamReader = new(stream);
@@ -56,7 +56,7 @@ public class JsonStringLocalizer : IStringLocalizer
 
     private string GetString(string key)
     {
-        var filePath = $"Resources/{Thread.CurrentThread.CurrentCulture.Name}.json";
+        var filePath = $"Resources/Localization/{Thread.CurrentThread.CurrentCulture.Name}.json";
         var fullFilePath = Path.GetFullPath(filePath);
 
         if (File.Exists(fullFilePath))
@@ -67,7 +67,7 @@ public class JsonStringLocalizer : IStringLocalizer
             if (!string.IsNullOrEmpty(cacheValue))
                 return cacheValue;
 
-            var result = GetValueFromJSON(key, fullFilePath);
+            var result = GetValueFromJson(key, fullFilePath);
 
             if (!string.IsNullOrEmpty(result))
                 _cache.SetString(cacheKey, result);
@@ -78,7 +78,7 @@ public class JsonStringLocalizer : IStringLocalizer
         return string.Empty;
     }
 
-    private string GetValueFromJSON(string propertyName, string filePath)
+    private string GetValueFromJson(string propertyName, string filePath)
     {
         try
         {
