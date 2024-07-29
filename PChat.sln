@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PChat.Application", "PChat.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PChat.Domain", "PChat.Domain\PChat.Domain.csproj", "{E36A345E-A876-4004-B62C-866143B3F870}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PChat.Persistance", "PChat.Persistance\PChat.Persistance.csproj", "{C3B53B08-8511-4136-A902-22B231B82E43}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PChat.Persistence", "PChat.Persistence\PChat.Persistence.csproj", "{C3B53B08-8511-4136-A902-22B231B82E43}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PChat.Presentation", "PChat.Presentation\PChat.Presentation.csproj", "{BC9E3A51-FA54-4D73-A00F-E89ED165D5ED}"
 EndProject

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PChat.Domain.Entities;
 
-namespace PChat.Persistance.Configurations;
+namespace PChat.Persistence.Configurations;
 
 public sealed class ErrorLogConfiguration : IEntityTypeConfiguration<ErrorLog>
 {

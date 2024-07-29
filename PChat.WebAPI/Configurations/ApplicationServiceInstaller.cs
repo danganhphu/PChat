@@ -28,7 +28,6 @@ public sealed class ApplicationServiceInstaller : IServiceInstaller
             };
             options.SupportedCultures = supportedCultures;
             options.SupportedUICultures = supportedCultures;
-
         });
     }
 }

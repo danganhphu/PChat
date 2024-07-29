@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PChat.Domain.Entities;
 
-namespace PChat.Persistance.Configurations;
+namespace PChat.Persistence.Configurations;
 
 public sealed class GroupCallConfiguration : IEntityTypeConfiguration<GroupCall>
 {
@@ -25,11 +25,6 @@ public sealed class GroupCallConfiguration : IEntityTypeConfiguration<GroupCall>
             .IsRequired()
             .HasMaxLength(100)
             .IsUnicode();
-
-        builder.Property(gc => gc.CreatedBy)
-            .IsRequired()
-            .HasMaxLength(36)
-            .IsUnicode(false);
 
         builder.Property(gc => gc.LastActive)
             .IsRequired();

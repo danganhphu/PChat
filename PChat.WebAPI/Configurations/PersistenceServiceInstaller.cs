@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PChat.Domain.Entities;
-using PChat.Persistance.Context;
+using PChat.Persistence.Context;
 using Serilog;
 
 namespace PChat.WebAPI.Configurations;
 
-public sealed class PersistanceServiceInstaller : IServiceInstaller
+public sealed class PersistenceServiceInstaller : IServiceInstaller
 {
     public void Install(IServiceCollection services, IConfiguration configuration, IHostBuilder host)
     {
-        services.AddAutoMapper(typeof(PChat.Persistance.AssemblyRefence).Assembly);
+        services.AddAutoMapper(typeof(PChat.Persistence.AssemblyRefence).Assembly);
 
         string connectionString = configuration.GetConnectionString("DbDevConnection");
         
@@ -18,7 +18,7 @@ public sealed class PersistanceServiceInstaller : IServiceInstaller
 
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(connectionString, 
-                sqlOptions => sqlOptions.MigrationsAssembly(typeof(PChat.Persistance.AssemblyRefence).Assembly.FullName)));
+                sqlOptions => sqlOptions.MigrationsAssembly(typeof(PChat.Persistence.AssemblyRefence).Assembly.FullName)));
 
         services.AddIdentityCore<User>(options =>
         {

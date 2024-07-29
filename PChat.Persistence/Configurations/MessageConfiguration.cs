@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PChat.Domain.Entities;
 
-namespace PChat.Persistance.Configurations;
+namespace PChat.Persistence.Configurations;
 
 public sealed class MessageConfiguration : IEntityTypeConfiguration<Message>
 {
@@ -28,10 +28,6 @@ public sealed class MessageConfiguration : IEntityTypeConfiguration<Message>
             .HasMaxLength(200)
             .IsUnicode();
 
-        builder.Property(m => m.CreatedBy)
-            .HasMaxLength(36)
-            .IsUnicode(false);
-
         builder.HasOne(m => m.Group)
             .WithMany(g => g.Messages)
             .HasForeignKey(m => m.GroupCode)
@@ -40,7 +36,6 @@ public sealed class MessageConfiguration : IEntityTypeConfiguration<Message>
         builder.HasOne(m => m.UserCreatedBy)
             .WithMany(u => u.Messages)
             .HasForeignKey(m => m.CreatedBy)
-            .HasPrincipalKey(u => u.Code)
             .OnDelete(DeleteBehavior.SetNull);
     }
 }

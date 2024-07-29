@@ -10,7 +10,7 @@ using PChat.Application.Features.AuthFeatures.Commands.Register;
 using PChat.Application.Services;
 using PChat.Domain.Entities;
 
-namespace PChat.Persistance.Services;
+namespace PChat.Persistence.Services;
 
 public sealed class AuthService(
     UserManager<User> userManager,

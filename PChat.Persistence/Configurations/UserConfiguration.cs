@@ -2,21 +2,13 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PChat.Domain.Entities;
 
-namespace PChat.Persistance.Configurations;
+namespace PChat.Persistence.Configurations;
 
 public sealed class UserConfiguration: IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.HasKey(u => u.Id);
-
-        builder.Property(u => u.Code)
-            .IsRequired()
-            .HasMaxLength(36)
-            .IsUnicode(false);
-
-        builder.HasIndex(u => u.Code)
-            .IsUnique();
 
         builder.Property(u => u.FullName)
             .IsRequired()
@@ -55,19 +47,16 @@ public sealed class UserConfiguration: IEntityTypeConfiguration<User>
         builder.HasMany(u => u.Calls)
             .WithOne(c => c.User)
             .HasForeignKey(c => c.UserCode)
-            .HasPrincipalKey(u => u.Code)
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(u => u.GroupUsers)
             .WithOne(gu => gu.User)
             .HasForeignKey(gu => gu.UserCode)
-            .HasPrincipalKey(u => u.Code)
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(u => u.Messages)
             .WithOne(m => m.UserCreatedBy)
             .HasForeignKey(m => m.CreatedBy)
-            .HasPrincipalKey(u => u.Code)
             .OnDelete(DeleteBehavior.SetNull);
     }
 }

@@ -4,7 +4,6 @@ namespace PChat.Domain.Entities;
 
 public sealed class User : IdentityUser
 {
-    public required string Code { get; set; } = Guid.NewGuid().ToString();
     public string FullName { get; set; } = string.Empty;
     public string Dob { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;

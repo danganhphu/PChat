@@ -2,7 +2,7 @@
 using PChat.Application.Features.AuthFeatures.Commands.Register;
 using PChat.Domain.Entities;
 
-namespace PChat.Persistance.Mappings;
+namespace PChat.Persistence.Mappings;
 
 public sealed class MappingProfile : Profile
 {

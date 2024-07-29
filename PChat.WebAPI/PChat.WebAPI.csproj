@@ -31,7 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PChat.Application\PChat.Application.csproj" />
     <ProjectReference Include="..\PChat.Infrastructure\PChat.Infrastructure.csproj" />
-    <ProjectReference Include="..\PChat.Persistance\PChat.Persistance.csproj" />
+    <ProjectReference Include="..\PChat.Persistence\PChat.Persistence.csproj" />
     <ProjectReference Include="..\PChat.Presentation\PChat.Presentation.csproj" />
   </ItemGroup>
 

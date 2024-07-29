@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PChat.Domain.Entities;
 
-namespace PChat.Persistance.Configurations;
+namespace PChat.Persistence.Configurations;
 
 public sealed class CallConfiguration : IEntityTypeConfiguration<Call>
 {
@@ -11,10 +11,6 @@ public sealed class CallConfiguration : IEntityTypeConfiguration<Call>
         builder.HasKey(c => c.Id);
 
         builder.Property(c => c.GroupCallCode)
-            .HasMaxLength(36)
-            .IsUnicode(false);
-
-        builder.Property(c => c.UserCode)
             .HasMaxLength(36)
             .IsUnicode(false);
 
@@ -36,7 +32,6 @@ public sealed class CallConfiguration : IEntityTypeConfiguration<Call>
         builder.HasOne(c => c.User)
             .WithMany(u => u.Calls)
             .HasForeignKey(c => c.UserCode)
-            .HasPrincipalKey(u => u.Code)
             .OnDelete(DeleteBehavior.SetNull)
             .HasConstraintName("FK_Call_User");
     }

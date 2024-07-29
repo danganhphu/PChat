@@ -3,7 +3,7 @@ using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using PChat.Application.Bases;
 using PChat.Domain.Entities;
-using PChat.Persistance.Context;
+using PChat.Persistence.Context;
 using System.Text.Json;
 
 

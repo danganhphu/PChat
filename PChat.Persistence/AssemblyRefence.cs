@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace PChat.Persistance;
+namespace PChat.Persistence;
 
 public static class AssemblyRefence
 {

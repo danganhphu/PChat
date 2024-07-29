@@ -4,22 +4,19 @@ using MediatR;
 
 namespace PChat.Application.Behaviors;
 
-public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : class, IRequest<TResponse>
+public sealed class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators) : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : class, IRequest<TResponse>
 {
-    private readonly IEnumerable<IValidator<TRequest>> _validators;
-
-    public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators) => _validators = validators;
-
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        if(!_validators.Any())
+        if(!validators.Any())
         {
             return await next();
         }
 
         var context = new ValidationContext<TRequest>(request);
 
-        var errorDictionary = _validators
+        var errorDictionary = validators
             .Select(s => s.Validate(context))
             .SelectMany(s => s.Errors)
             .Where(s => s != null)

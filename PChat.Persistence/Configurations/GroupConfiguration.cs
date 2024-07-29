@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PChat.Domain.Entities;
 
-namespace PChat.Persistance.Configurations;
+namespace PChat.Persistence.Configurations;
 
 public sealed class GroupConfiguration : IEntityTypeConfiguration<Group>
 {
@@ -26,11 +26,6 @@ public sealed class GroupConfiguration : IEntityTypeConfiguration<Group>
             .IsRequired()
             .HasMaxLength(100)
             .IsUnicode();
-
-        builder.Property(g => g.CreatedBy)
-            .IsRequired()
-            .HasMaxLength(36)
-            .IsUnicode(false);
 
         builder.Property(g => g.LastActive)
             .IsRequired();

@@ -1,6 +1,6 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using PChat.Persistance.Context;
+using PChat.Persistence.Context;
 using PChat.WebAPI;
 using PChat.WebAPI.Configurations;
 using PChat.WebAPI.Middleware;
@@ -30,8 +30,8 @@ try
         typeof(ApplicationServiceInstaller).Assembly,
         typeof(AuthorizeServiceInstaller).Assembly,
         typeof(InfrastructureServiceInstaller).Assembly,
-        typeof(PersistanceDIServiceInstaller).Assembly,
-        typeof(PersistanceServiceInstaller).Assembly,
+        typeof(PersistenceDIServiceInstaller).Assembly,
+        typeof(PersistenceServiceInstaller).Assembly,
         typeof(PresentationServiceInstaller).Assembly);
 
     var app = builder.Build();

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PChat.Domain.Entities;
 
-namespace PChat.Persistance.Configurations;
+namespace PChat.Persistence.Configurations;
 
 public sealed class GroupUserConfiguration : IEntityTypeConfiguration<GroupUser>
 {
@@ -11,10 +11,6 @@ public sealed class GroupUserConfiguration : IEntityTypeConfiguration<GroupUser>
         builder.HasKey(gu => gu.Id);
 
         builder.Property(gu => gu.GroupCode)
-            .HasMaxLength(36)
-            .IsUnicode(false);
-
-        builder.Property(gu => gu.UserCode)
             .HasMaxLength(36)
             .IsUnicode(false);
 
@@ -29,7 +25,6 @@ public sealed class GroupUserConfiguration : IEntityTypeConfiguration<GroupUser>
         builder.HasOne(gu => gu.User)
             .WithMany(u => u.GroupUsers)
             .HasForeignKey(gu => gu.UserCode)
-            .HasPrincipalKey(u => u.Code)
             .OnDelete(DeleteBehavior.SetNull);
     }
 }
