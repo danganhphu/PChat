@@ -1,6 +1,6 @@
 ﻿namespace PChat.Application.Services;
 
-public interface IUser
+public interface ICurrentUser
 {
     string? Id { get; }
 }

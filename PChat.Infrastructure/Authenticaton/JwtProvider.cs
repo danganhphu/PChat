@@ -5,21 +5,15 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using PChat.Application.Abstractions;
+using PChat.Application.Abstractions.JWT;
 using PChat.Application.Features.AuthFeatures.Commands.Login;
 using PChat.Domain.Entities;
 
 namespace PChat.Infrastructure.Authenticaton;
 
-public sealed class JwtProvider : IJwtProvider
+public sealed class JwtProvider(IOptions<JwtOptions> jwtOptions, UserManager<User> userManager) : IJwtProvider
 {
-    private readonly JwtOptions _jwtOptions;
-    private readonly UserManager<User> _userManager;
-    public JwtProvider(IOptions<JwtOptions> jwtOptions, UserManager<User> userManager)
-    {
-        _jwtOptions = jwtOptions.Value;
-        _userManager = userManager;
-    }
+    private readonly JwtOptions _jwtOptions = jwtOptions.Value;
 
     public async Task<LoginCommandResponse> CreateTokenAsync(User user)
     {
@@ -47,7 +41,7 @@ public sealed class JwtProvider : IJwtProvider
 
         user.RefreshToken = refreshToken;
         user.RefreshTokenExpires = expires.AddMinutes(15);
-        await _userManager.UpdateAsync(user);
+        await userManager.UpdateAsync(user);
 
         LoginCommandResponse response = new(
             token,

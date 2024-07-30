@@ -6,7 +6,7 @@ using PChat.Domain.Entities;
 
 namespace PChat.Persistence.Services;
 
-public class CurrentUser(IHttpContextAccessor httpContextAccessor, UserManager<User> userManager) : IUser
+public class CurrentUser(IHttpContextAccessor httpContextAccessor, UserManager<User> userManager) : ICurrentUser
 {
     public string? Id => httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
 }

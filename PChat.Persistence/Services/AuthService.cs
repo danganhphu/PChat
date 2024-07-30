@@ -1,10 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Text;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
-using PChat.Application.Abstractions;
-using PChat.Application.Bases;
+using PChat.Application.Abstractions.JWT;
 using PChat.Application.Constants;
+using PChat.Application.Exceptions;
 using PChat.Application.Features.AuthFeatures.Commands.CreateNewTokenByRefreshToken;
 using PChat.Application.Features.AuthFeatures.Commands.Login;
 using PChat.Application.Features.AuthFeatures.Commands.PostHubConnection;
@@ -17,11 +17,9 @@ namespace PChat.Persistence.Services;
 public sealed class AuthService(
     UserManager<User> userManager,
     IMapper mapper,
-    IStringLocalizer<BaseResponseHandler> localizer,
-    IStringLocalizer<AuthService> authServiceLocalizer,
     IJwtProvider jwtProvider,
-    IUser currentUser)
-    : BaseResponseHandler(localizer), IAuthService
+    ICurrentUser currentUser)
+    : IAuthService
 {
     public async Task<LoginCommandResponse> CreateTokenByRefreshTokenAsync(CreateNewTokenByRefreshTokenCommand request,
         CancellationToken cancellationToken)
@@ -40,64 +38,64 @@ public sealed class AuthService(
         return response;
     }
 
-    public async Task<BaseResponse<LoginCommandResponse>> LoginAsync(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<LoginCommandResponse> LoginAsync(LoginCommand request, CancellationToken cancellationToken)
     {
-        User? user =
+        var user =
             await userManager.Users
                 .Where(
                     p => p.UserName == request.UserNameOrEmail
                          || p.Email == request.UserNameOrEmail)
                 .FirstOrDefaultAsync(cancellationToken);
-        
-        if (user == null)
-        {
-            return NotFound<LoginCommandResponse>(localizer["UserNotFound"]);
-        }
+
+        if (user == null) throw new Exception("User not found!");
 
         var result = await userManager.CheckPasswordAsync(user, request.Password);
-        
-        if (!result)
+
+        if (result)
         {
-            return NotFound<LoginCommandResponse>(localizer["InvalidCredentials", request.UserNameOrEmail]);
+            LoginCommandResponse response = await jwtProvider.CreateTokenAsync(user);
+            return response;
         }
 
-        var response =  await jwtProvider.CreateTokenAsync(user);
-        return Success(response);
+        throw new Exception("Incorrect password!");
     }
 
-    public async Task<BaseResponse<RegisterResult>> RegisterAsync(RegisterCommand request)
+    public async Task<RegisterResponse> RegisterAsync(RegisterCommand request)
     {
         var user = mapper.Map<User>(request);
         user.Avatar = Constants.AvatarDefault;
-        var existingUser = await userManager.FindByNameAsync(request.UserName);
+
+        var existingUser =
+            await userManager.Users
+                .Where(
+                    p => p.UserName == request.UserName
+                         || p.Email == request.Email)
+                .FirstOrDefaultAsync();
 
         if (existingUser != null)
         {
-            return Conflict<RegisterResult>(authServiceLocalizer["UsernameExists", request.UserName]);
+            throw new Exception($"Username {request.UserName} already exists");
         }
-        
-        var existingEmail = await userManager.FindByEmailAsync(request.Email);
 
-        if (existingEmail == null)
+        var result = await userManager.CreateAsync(user, request.Password);
+
+        if (result.Succeeded)
         {
-            var result = await userManager.CreateAsync(user, request.Password);
-
-            if (result.Succeeded)
-            {
-                return Created(new RegisterResult(user.Id));
-            }
-            else
-            {
-                return BadRequest<RegisterResult>(authServiceLocalizer["BadRequestDetails"], result.Errors.Select(a => a.Description).ToList());
-            }
+            return new RegisterResponse(user.Id);
         }
         else
         {
-            return Conflict<RegisterResult>(authServiceLocalizer["EmailExists", request.Email]);
+            StringBuilder str = new StringBuilder();
+            foreach (var err in result.Errors)
+            {
+                str.AppendFormat("•{0}\n", err.Description);
+            }
+
+            throw new BadRequestException($"{str}");
         }
     }
-    
-    public async Task<BaseResponse<string>> PostHubConnection(PostHubConnectionCommand request, CancellationToken cancellationToken)
+
+    public async Task<string> PostHubConnection(PostHubConnectionCommand request, CancellationToken cancellationToken)
     {
         var userId = currentUser.Id;
         var user = await userManager.Users
@@ -107,12 +105,25 @@ public sealed class AuthService(
         {
             user.CurrentSession = request.Key;
             var result = await userManager.UpdateAsync(user);
-            
-            return !result.Succeeded ? BadRequest<string>(authServiceLocalizer["BadRequestDetails"], result.Errors.Select(a => a.Description).ToList()) : Success("PostHubConnection Success");
+
+            if (result.Succeeded)
+            {
+                return "PostHubConnection Success";
+            }
+            else
+            {
+                StringBuilder str = new StringBuilder();
+                foreach (var err in result.Errors)
+                {
+                    str.AppendFormat("•{0}\n", err.Description);
+                }
+
+                throw new BadRequestException($"{str}");
+            }
         }
         else
         {
-            return NotFound<string>(localizer["UserNotFoundHubConnection", request.Key]);
+            throw new Exception($"PostHubConnection key {request.Key} null");
         }
     }
 }

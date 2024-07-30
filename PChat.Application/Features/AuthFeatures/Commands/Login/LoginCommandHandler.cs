@@ -1,12 +1,11 @@
 ﻿using PChat.Application.Services;
 using MediatR;
-using PChat.Application.Bases;
 
 namespace PChat.Application.Features.AuthFeatures.Commands.Login;
 
-public sealed class LoginCommandHandler(IAuthService authService) : IRequestHandler<LoginCommand, BaseResponse<LoginCommandResponse>>
+public sealed class LoginCommandHandler(IAuthService authService) : IRequestHandler<LoginCommand, LoginCommandResponse>
 {
-    public async Task<BaseResponse<LoginCommandResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<LoginCommandResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         return await authService.LoginAsync(request, cancellationToken);
     }
